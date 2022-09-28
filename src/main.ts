@@ -9,7 +9,6 @@ import { Sun, Earth, Moon } from "./object";
 
 (function entry() {
   // start running assignment.
-
   const screenWidth = window.innerWidth;
   const screenHeight = window.innerHeight;
 

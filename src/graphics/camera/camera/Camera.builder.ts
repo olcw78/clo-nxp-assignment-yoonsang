@@ -1,11 +1,11 @@
-import { CameraBuildable as CameraBuildable } from "../Camera.buildable";
+import { CameraBuildable as CameraBuildable } from "./Camera.buildable";
 import { OrthographicCameraData } from "../orthographic/OrthographicCamera.data";
 import {
   PerspectiveCameraData,
   TPickedPerspectiveCameraData
 } from "../perspective/PerspectiveCamera.data";
 
-export class CameraDataBuilder {
+export class CameraBuilder {
   public static setPerspectiveCameraData(
     data: TPickedPerspectiveCameraData
   ): CameraBuildable<Required<PerspectiveCameraData>> {

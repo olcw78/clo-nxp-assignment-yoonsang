@@ -1,4 +1,4 @@
-import { ICameraData } from "../camera data/CameraData.interface";
+import { ICameraData } from "../camera/Camera.interface";
 
 export interface PerspectiveCameraData extends ICameraData {
   fov?: number;

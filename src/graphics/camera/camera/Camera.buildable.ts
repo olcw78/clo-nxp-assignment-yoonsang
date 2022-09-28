@@ -3,7 +3,7 @@ import {
   PerspectiveCamera as ThreePerspectiveCamera,
   OrthographicCamera as ThreeOrthographicCamera
 } from "three";
-import { ICameraData } from "./camera data/CameraData.interface";
+import { ICameraData } from "./Camera.interface";
 
 export class CameraBuildable<CameraDataT extends ICameraData> {
   public constructor(private readonly _cameraData: CameraDataT) {}
