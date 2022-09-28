@@ -2,7 +2,7 @@
 // 28 Sep 2022 이윤상 CLO Virtual Fashion NXP Web Graphics Assignment.
 //
 
-import { MeshBasicMaterial, MeshLambertMaterial, SphereGeometry } from "three";
+import { MeshBasicMaterial, SphereGeometry } from "three";
 import { Camera } from "./lib/camera";
 import { Runner } from "./playground/runner";
 import { Sun, Earth, Moon } from "./playground/entity";
@@ -30,19 +30,10 @@ import { WebGLCompatibilityCheck } from "./lib/util/WebGLCompatibilityCheck";
       nearFar: { near: 0.1, far: 400 }
     }).build()
   )
-    .add(
-      new Sun().setResources(
-        new SphereGeometry(0.1),
-        new MeshBasicMaterial({ color: 0xff0000 })
-      ),
-      new Earth().setResources(
-        new SphereGeometry(0.1),
-        new MeshBasicMaterial({ color: 0xff0000 })
-      ),
-      new Moon().setResources(
-        new SphereGeometry(0.1),
-        new MeshBasicMaterial({ color: 0xff0000 })
-      )
+    .setEntities(
+      new Sun(new SphereGeometry(0.1), new MeshBasicMaterial({ color: 0xff0000 })),
+      new Earth(new SphereGeometry(0.1), new MeshBasicMaterial({ color: 0x00ff00 })),
+      new Moon(new SphereGeometry(0.1), new MeshBasicMaterial({ color: 0x0000ff }))
     )
     .start()
     .run();

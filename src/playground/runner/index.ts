@@ -4,7 +4,15 @@ import { PerspectiveCameraData } from "src/lib/camera/perspective/PerspectiveCam
 import { IStartable } from "src/lib/object/lifecycle/IStartable";
 import { LifecycleManager } from "src/lib/object/lifecycle/LifecycleManager";
 import { thisbind } from "src/shared/decorator/thisbind";
-import { Camera as ThreeCamera, Scene, WebGLRenderer } from "three";
+import {
+  Camera as ThreeCamera,
+  Mesh,
+  MeshBasicMaterial,
+  Object3D,
+  Scene,
+  SphereGeometry,
+  WebGLRenderer
+} from "three";
 import { Entity } from "../../lib/object/entitiy";
 
 export class Runner {
@@ -36,17 +44,23 @@ export class Runner {
     const { camera, cameraData } = cameraIntializer;
     this._camera = camera;
     this._cameraData = cameraData;
-    // Camera.Connect.connect(, this._camera);
     this._scene.add(this._camera);
-    this._camera.position.z = 5;
+    this._camera.position.z = 3;
 
     // set renderer.
     this._renderer = new WebGLRenderer();
     this._renderer.setSize(window.innerWidth, window.innerHeight);
 
     // attach dom canvas.
-    // _rootElement.body(this._renderer.domElement);
     document.body.appendChild(this._renderer.domElement);
+    // const mesh = new Mesh(new SphereGeometry(0.5), new MeshBasicMaterial());
+    // this._scene.add(mesh);
+    document.body.addEventListener("resize", this.resize);
+  }
+
+  @thisbind
+  resize(): void {
+    this._renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
   // #region behaviour
@@ -56,12 +70,12 @@ export class Runner {
     return this;
   }
 
-  public add(...sceneEntities: Entity[]) {
-    if (sceneEntities.length === 0) return this;
+  public setEntities(...sceneObjects: Object3D[]): Runner {
+    if (sceneObjects.length === 0) return this;
 
-    for (let e of sceneEntities) {
-      this._lifecycleManager.startables.push(e as unknown as IStartable);
-      this._scene.add(e);
+    for (let i of sceneObjects) {
+      this._lifecycleManager.startables.push(i as unknown as IStartable);
+      this._scene.add(i);
     }
 
     return this;
@@ -73,12 +87,12 @@ export class Runner {
   public run(): void {
     console.log("runner runs!");
 
-    this._lifecycleManager.loopUpdatables(0);
+    // this._lifecycleManager.loopUpdatables(0);
 
     requestAnimationFrame(this.run);
     this._renderer.render(this._scene, this._camera);
 
-    this._lifecycleManager.loopLateUpdatables(0);
+    // this._lifecycleManager.loopLateUpdatables(0);
   }
 
   // #endregion behaviour
