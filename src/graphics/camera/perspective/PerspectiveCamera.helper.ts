@@ -1,11 +1,5 @@
 import { PerspectiveCamera } from "three";
-
-export type TPerspectiveCameraData = {
-  fov?: number;
-  screenDimension?: { width: number; height: number };
-  aspectRatio?: number;
-  nearFar?: { near: number; far: number };
-};
+import { PerspectiveCameraData } from "./PerspectiveCamera.data";
 
 export class PerspectiveCameraHelper {
   private constructor() {} /** delete ctor */
@@ -20,7 +14,11 @@ export class PerspectiveCameraHelper {
   };
   private static readonly _defaultNearFar = { near: 0.1, far: 300 };
 
-  public static defaultPerspectiveData(): Required<TPerspectiveCameraData> {
+  /**
+   * make default perspective camera data.
+   * @returns Required
+   */
+  private static defaultPerspectiveCameraData(): Required<PerspectiveCameraData> {
     return {
       fov: this._defaultFov,
       screenDimension: this._defaultScreenDimension,
@@ -31,42 +29,42 @@ export class PerspectiveCameraHelper {
 
   /**
    * get default Perspective camera data.
-   * @param  {TPerspectiveCameraData} data? perspective camera 초기화에 쓰이는 temporary data.
+   * @param  {PerspectiveCameraData} data? perspective camera 초기화에 쓰이는 temporary data.
    * @returns Required of TPerspectiveCameraData
    */
   public static getDataOrDefault(
-    data?: TPerspectiveCameraData
-  ): Required<TPerspectiveCameraData> {
+    data?: PerspectiveCameraData
+  ): Required<PerspectiveCameraData> {
     const {
       fov: defaultFov,
       screenDimension: defaultScreenDimension,
       aspectRatio: defaultAspectRatio,
       nearFar: defaultNearFar
-    } = this.defaultPerspectiveData();
+    } = this.defaultPerspectiveCameraData();
 
     return {
       fov: data?.fov ?? defaultFov,
       screenDimension: data?.screenDimension ?? defaultScreenDimension,
       aspectRatio: data?.aspectRatio ?? defaultAspectRatio,
       nearFar: data?.nearFar ?? defaultNearFar
-    } as Required<TPerspectiveCameraData>;
+    } as Required<PerspectiveCameraData>;
   }
 
   // #endregion default
 
   /**
    * build a three perspective camera.
-   * @param  {TPerspectiveCameraData} _perspectiveCameraDataOverride?
+   * @param  {Required<PerspectiveCameraData>} _perspectiveCameraDataOverride
    * @returns PerspectiveCamera
    */
   public static build(
-    _perspectiveCameraDataOverride?: TPerspectiveCameraData
+    _perspectiveCameraDataOverride: Required<PerspectiveCameraData>
   ): PerspectiveCamera {
     const {
       fov,
       aspectRatio,
       nearFar: { near, far }
-    } = this.getDataOrDefault(_perspectiveCameraDataOverride);
+    } = _perspectiveCameraDataOverride;
 
     return new PerspectiveCamera(fov, aspectRatio, near, far);
   }
