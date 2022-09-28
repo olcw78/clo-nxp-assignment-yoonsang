@@ -1,0 +1,38 @@
+{
+  "name": "clo-nxp-assignment-yoonsang",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "author": "yoonsang lee <highp0912@pm.me>",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "jest",
+    "test:watch": "jest --watchAll"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.19.1",
+    "@babel/preset-env": "^7.19.3",
+    "@babel/preset-typescript": "^7.18.6",
+    "@types/jest": "^29.0.3",
+    "@types/three": "^0.144.0",
+    "@typescript-eslint/eslint-plugin": "^5.38.1",
+    "@typescript-eslint/parser": "^5.38.1",
+    "eslint": "^8.24.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^29.0.3",
+    "jest-environment-jsdom": "^29.0.3",
+    "prettier": "^2.7.1",
+    "ts-jest": "^29.0.2",
+    "typescript": "^4.6.4",
+    "vite": "^3.1.0",
+    "vite-tsconfig-paths": "^3.5.1"
+  },
+  "dependencies": {
+    "resetcss": "^1.0.3",
+    "rxjs": "^7.5.7",
+    "three": "^0.144.0"
+  }
+}
