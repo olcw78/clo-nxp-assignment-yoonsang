@@ -5,6 +5,7 @@
     }
   ],
   "compilerOptions": {
+    "experimentalDecorators": true,
     "target": "ESNext",
     "composite": true,
     "module": "ESNext",
@@ -32,7 +33,7 @@
         "./src/util/*"
       ],
       "@const/*": [
-        "./src/const/*"
+        "src/lib/const/*"
       ],
       "@comp/*": [
         "./src/component/*"

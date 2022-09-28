@@ -13,13 +13,17 @@ export class CameraBuilder {
 
     return new CameraBuildable({
       ...data,
-      aspectRatio: (screenDimension?.width ?? 16) / (screenDimension?.height ?? 9)
+      aspectRatio: (screenDimension?.width ?? 16) / (screenDimension?.height ?? 9),
+      implementedType: "perspectiveCamera"
     } as Required<PerspectiveCameraData>);
   }
 
   public static setOrthographicCameraData(
     data: OrthographicCameraData
   ): CameraBuildable<Required<OrthographicCameraData>> {
-    return new CameraBuildable({ ...data } as Required<OrthographicCameraData>);
+    return new CameraBuildable({
+      ...data,
+      implementedType: "orthographicCamera"
+    } as Required<OrthographicCameraData>);
   }
 }

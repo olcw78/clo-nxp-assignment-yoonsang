@@ -8,13 +8,19 @@ import { ICameraData } from "./Camera.interface";
 export class CameraBuildable<CameraDataT extends ICameraData> {
   public constructor(private readonly _cameraData: CameraDataT) {}
 
-  public build(): ThreeCamera {
+  public build() {
     switch (this._cameraData.implementedType) {
       case "orthographicCamera":
-        return new ThreeOrthographicCamera();
+        return {
+          camera: new ThreeOrthographicCamera(),
+          cameraData: this._cameraData
+        };
 
       case "perspectiveCamera":
-        return new ThreePerspectiveCamera();
+        return {
+          camera: new ThreePerspectiveCamera(),
+          cameraData: this._cameraData
+        };
     }
   }
 }
