@@ -6,10 +6,16 @@ import { LifecycleManager } from "src/lib/object/lifecycle/LifecycleManager";
 import { thisbind } from "src/shared/decorator/thisbind";
 import {
   Camera as ThreeCamera,
+  DirectionalLight,
+  LoadingManager,
+  Mesh,
+  MeshBasicMaterial,
   Object3D,
   Scene,
   WebGLRenderer
 } from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 
 export class Runner {
   // #region data
@@ -27,6 +33,8 @@ export class Runner {
 
   private readonly _lifecycleManager: LifecycleManager = new LifecycleManager();
 
+  // private _orbitControl: OrbitControls;
+
   // #endregion data
 
   public constructor(cameraIntializer: {
@@ -41,7 +49,15 @@ export class Runner {
     this._camera = camera;
     this._cameraData = cameraData;
     this._scene.add(this._camera);
-    this._camera.position.z = 3;
+    this._camera.position.z = 2000;
+
+    const color = 0xffffff;
+    const intensity = 3;
+    const light = new DirectionalLight(color, intensity);
+    light.position.set(0, 10, 0);
+    light.target.position.set(-5, 0, 0);
+    this._scene.add(light);
+    this._scene.add(light.target);
 
     // set renderer.
     this._renderer = new WebGLRenderer();
@@ -49,9 +65,11 @@ export class Runner {
 
     // attach dom canvas.
     document.body.appendChild(this._renderer.domElement);
-    // const mesh = new Mesh(new SphereGeometry(0.5), new MeshBasicMaterial());
-    // this._scene.add(mesh);
     document.body.addEventListener("resize", this.resize);
+
+    // connect orbit controls.
+    // this._orbitControl = new OrbitControls(this._camera, this._renderer.domElement);
+    // this._orbitControl.target.set(0, 5, 0);
   }
 
   @thisbind
@@ -63,6 +81,7 @@ export class Runner {
 
   public start(): Runner {
     this._lifecycleManager.loopStartables();
+    console.log(this._renderer.domElement.toDataURL());
     return this;
   }
 
@@ -86,6 +105,7 @@ export class Runner {
     // this._lifecycleManager.loopUpdatables(0);
 
     requestAnimationFrame(this.run);
+    // this._orbitControl.update();
     this._renderer.render(this._scene, this._camera);
 
     // this._lifecycleManager.loopLateUpdatables(0);

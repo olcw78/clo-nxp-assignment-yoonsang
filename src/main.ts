@@ -2,12 +2,19 @@
 // 28 Sep 2022 이윤상 CLO Virtual Fashion NXP Web Graphics Assignment.
 //
 
-import { MeshBasicMaterial, SphereGeometry } from "three";
+import {
+  MeshBasicMaterial,
+  MeshLambertMaterial,
+  MeshPhysicalMaterial,
+  SphereGeometry,
+  TextureLoader
+} from "three";
 import { Camera } from "./lib/camera";
 import { Runner } from "./playground/runner";
 import { Sun, Earth, Moon } from "./playground/entity";
 import { WebGLCompatibilityCheck } from "./lib/util/WebGLCompatibilityCheck";
-import { MeshBuilder } from "./lib/object/MeshBuilder";
+import { ResourcesLoader } from "./lib/object/ResourcesLoader";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 
 (async function entry() {
   if (!WebGLCompatibilityCheck.isWebGLAvailable()) {
@@ -24,41 +31,55 @@ import { MeshBuilder } from "./lib/object/MeshBuilder";
   const screenWidth = window.innerWidth;
   const screenHeight = window.innerHeight;
 
-  MeshBuilder.init();
+  ResourcesLoader.init();
 
-  const sunInitializerObject = await MeshBuilder.build("asset/sun/geometry.drc", [
-    "asset/sun/diffuse.png"
-  ]);
+  // const { geometry: sunGeometry, materials: sunMaterials } = await ResourcesLoader.build(
+  //   "asset/sun/geometry.drc",
+  //   ["asset/sun/diffuse.png"]
+  // );
 
-  const earthInitializerObject = await MeshBuilder.build(
-    "asset/earth/geometry.drc",
-    ["asset/earth/diffuse.png", "asset/earth/normal.png"]
-  );
+  // const { geometry: earthGeometry, materials: earthMaterials } =
+  //   await ResourcesLoader.build("asset/earth/geometry.drc", [
+  //     "asset/earth/diffuse.png",
+  //     "asset/earth/normal.png"
+  //   ]);
 
-  const moonInitializerObject = await MeshBuilder.build("asset/moon/geometry.drc", [
-    "asset/moon/diffuse.png"
-  ]);
+  // const { geometry: moonGeometry, materials: moonMaterials } =
+  //   await ResourcesLoader.build("asset/moon/geometry.drc", ["asset/moon/diffuse.png"]);
+
+  const dracoLoader = new DRACOLoader();
+  dracoLoader.setDecoderConfig({ type: "js" });
+  dracoLoader.setDecoderPath("/js/libs/draco/");
+  // dracoLoader.setDecoderPath(
+  //   "https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/js/libs/draco/"
+  // );
+  dracoLoader.preload();
+  const textureLoader = new TextureLoader();
+
+  const earthGeometry = await dracoLoader.loadAsync("asset/earth/geometry.drc");
+  const earthDiffuseTex = await textureLoader.loadAsync("asset/earth/diffuse.png");
+  const earthNormalTex = await textureLoader.loadAsync("asset/earth/normal.png");
+
+  const sunGeometry = await dracoLoader.loadAsync("asset/sun/geometry.drc");
+  const sunDiffuseTex = await textureLoader.loadAsync("asset/sun/diffuse.png");
+
+  const moonGeometry = await dracoLoader.loadAsync("asset/moon/geometry.drc");
+  const moonDiffuseTex = await textureLoader.loadAsync("asset/moon/diffuse.png");
 
   new Runner(
     Camera.Builder.setPerspectiveCameraData({
       fov: 75,
       screenDimension: { width: screenWidth, height: screenHeight },
-      nearFar: { near: 0.1, far: 400 }
+      nearFar: { near: 0.1, far: 100000 }
     }).build()
   )
     .setEntities(
-      new Sun(
-        sunInitializerObject.loadedGeometry,
-        sunInitializerObject.loadedMaterials
-      ), // new SphereGeometry(0.1), new MeshBasicMaterial({ color: 0xff0000 })
+      new Sun(sunGeometry, new MeshLambertMaterial({ map: sunDiffuseTex })),
       new Earth(
-        earthInitializerObject.loadedGeometry,
-        earthInitializerObject.loadedMaterials
+        earthGeometry,
+        new MeshLambertMaterial({ map: earthDiffuseTex, normalMap: earthNormalTex })
       ),
-      new Moon(
-        moonInitializerObject.loadedGeometry,
-        moonInitializerObject.loadedMaterials
-      )
+      new Moon(moonGeometry, new MeshLambertMaterial({ map: moonDiffuseTex }))
     )
     .start()
     .run();
