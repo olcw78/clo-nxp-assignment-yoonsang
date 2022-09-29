@@ -4,8 +4,8 @@ import { IUpdatable } from "src/lib/object/lifecycle/IUpdatable";
 import { BufferGeometry, Material, Mesh } from "three";
 
 export class Sun extends Mesh implements IStartable, IUpdatable {
-  constructor(geometry: BufferGeometry, material: Material) {
-    super(geometry, material);
+  constructor(geometry: BufferGeometry, materials: Material[]) {
+    super(geometry, materials);
   }
 
   onStart(): void {

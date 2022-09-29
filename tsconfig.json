@@ -47,7 +47,7 @@
     "src",
     "vite.config.ts",
     "src/jest.setup.ts"
-  ],
+, "js"  ],
   "exclude": [
     "node_modules"
   ],

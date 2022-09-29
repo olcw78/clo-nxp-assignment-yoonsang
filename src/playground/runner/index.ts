@@ -6,14 +6,10 @@ import { LifecycleManager } from "src/lib/object/lifecycle/LifecycleManager";
 import { thisbind } from "src/shared/decorator/thisbind";
 import {
   Camera as ThreeCamera,
-  Mesh,
-  MeshBasicMaterial,
   Object3D,
   Scene,
-  SphereGeometry,
   WebGLRenderer
 } from "three";
-import { Entity } from "../../lib/object/entitiy";
 
 export class Runner {
   // #region data
