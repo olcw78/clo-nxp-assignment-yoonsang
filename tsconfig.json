@@ -19,7 +19,7 @@
       "DOM",
       "DOM.Iterable"
     ],
-    "sourceMap": true,
+    // "sourceMap": true,
     "isolatedModules": false,
     "esModuleInterop": true,
     "noEmit": true,
@@ -27,19 +27,16 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
-      "@util/*": [
-        "./src/util/*"
+      "@lib/*": [
+        "src/lib/*"
       ],
-      "@const/*": [
-        "src/lib/const/*"
+      "@playground/*": [
+        "src/playground/*"
       ],
-      "@comp/*": [
-        "./src/component/*"
-      ],
-      "@state/*": [
-        "./src/state/*"
+      "@shared/*": [
+        "src/shared/*"
       ]
     }
   },
