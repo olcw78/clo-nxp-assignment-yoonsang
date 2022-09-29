@@ -19,6 +19,7 @@ import {
   PerspectiveCamera
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import * as lil from "lil-gui";
 
 type TCameraInitializer = {
   camera: ThreeCamera;
@@ -27,6 +28,7 @@ type TCameraInitializer = {
 
 export class Runner {
   // #region data
+
   private static _scene: Scene;
   public static get scene(): Scene {
     return Runner._scene;
@@ -51,7 +53,17 @@ export class Runner {
   private _orbitControl?: OrbitControls;
   private _orbitControlsEnabled: boolean = false;
 
-  private readonly _clock: Clock = new Clock();
+  private readonly _clock = new Clock();
+
+  private static _gui: lil.GUI;
+  public static get gui(): lil.GUI {
+    return Runner._gui;
+  }
+
+  private static _guiEnabled: boolean = false;
+  public static get guiEnabled(): boolean {
+    return Runner._guiEnabled;
+  }
 
   // #endregion data
 
@@ -79,6 +91,8 @@ export class Runner {
 
     // attach dom canvas.
     document.body.appendChild(this._renderer.domElement);
+
+    // attach web browsers event listeners.
     window.addEventListener("resize", this.resize);
     window.addEventListener("dblclick", this.toggleFullScreenMode);
   }
@@ -190,6 +204,13 @@ export class Runner {
 
   public enableAxesHelper(): this {
     Runner._scene.add(new AxesHelper(300));
+    return this;
+  }
+
+  public enableDebugGUI(): this {
+    Runner._gui = new lil.GUI();
+    Runner._guiEnabled = true;
+
     return this;
   }
 

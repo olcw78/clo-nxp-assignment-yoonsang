@@ -11,6 +11,11 @@
     "test": "jest",
     "test:watch": "jest --watchAll"
   },
+  "dependencies": {
+    "lil-gui": "^0.17.0",
+    "resetcss": "^1.0.3",
+    "three": "^0.144.0"
+  },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.19.1",
     "@babel/preset-env": "^7.19.3",
@@ -29,10 +34,5 @@
     "typescript": "^4.6.4",
     "vite": "^3.1.0",
     "vite-tsconfig-paths": "^3.5.1"
-  },
-  "dependencies": {
-    "resetcss": "^1.0.3",
-    "rxjs": "^7.5.7",
-    "three": "^0.144.0"
   }
 }
