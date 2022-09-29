@@ -2,7 +2,7 @@ import { IStartable } from "src/lib/object/lifecycle/IStartable";
 import { IUpdatable } from "src/lib/object/lifecycle/IUpdatable";
 import { BufferGeometry, Material, Mesh, Object3D, Vector3 } from "three";
 import { DEG_TO_RAD } from "../const";
-import { FluentRunner } from "../fluent-runner";
+import { Runner } from "../runner/runner";
 
 export class Earth extends Mesh implements IStartable, IUpdatable {
   constructor(geometry: BufferGeometry, materialOrMaterials: Material | Material[]) {
@@ -30,7 +30,7 @@ export class Earth extends Mesh implements IStartable, IUpdatable {
     );
 
     this._pivot.add(this);
-    FluentRunner.scene.add(this._pivot);
+    Runner.scene.add(this._pivot);
   }
 
   onUpdate(deltaTime: number): void {

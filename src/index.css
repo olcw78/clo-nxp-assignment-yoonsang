@@ -1,5 +1,9 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html,
 body {
-  margin: 0;
-  height: 100vh;
-  background: #bdc3c7;
+    overflow: hidden;
 }

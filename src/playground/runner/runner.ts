@@ -15,15 +15,15 @@ import {
   CubeTexture,
   Object3D,
   Scene,
-  WebGLRenderer
+  WebGLRenderer, PerspectiveCamera
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-export class FluentRunner {
+export class Runner {
   // #region data
   private static _scene: Scene;
   public static get scene(): Scene {
-    return FluentRunner._scene;
+    return Runner._scene;
   }
 
   private readonly _camera: ThreeCamera;
@@ -35,6 +35,7 @@ export class FluentRunner {
   public get cameraDataAsPerspective(): PerspectiveCameraData {
     return this._cameraData as PerspectiveCameraData;
   }
+
   public get cameraDataAsOrthographic(): OrthographicCameraData {
     return this._cameraData as OrthographicCameraData;
   }
@@ -53,17 +54,16 @@ export class FluentRunner {
     cameraData: ICameraData;
   }) {
     // init three scene.
-    FluentRunner._scene = new Scene();
+    Runner._scene = new Scene();
 
     // init camera and its properties.
     const { camera, cameraData } = cameraIntializer;
     this._camera = camera;
     this._cameraData = cameraData;
-    FluentRunner._scene.add(this._camera);
+    Runner._scene.add(this._camera);
 
-    this._camera.position.y = 300;
-    this._camera.position.z = 400;
-    // this._camera.lookAt(new Vector3(0, 0, 0));
+    this._camera.position.y = 150;
+    this._camera.position.z = 800;
 
     // set renderer.
     this._renderer = new WebGLRenderer({ antialias: true });
@@ -71,15 +71,22 @@ export class FluentRunner {
 
     // attach dom canvas.
     document.body.appendChild(this._renderer.domElement);
-    document.body.addEventListener("resize", this.resize);
+    window.addEventListener("resize", this.resize);
+  }
+
+  @thisbind
+  private resize(): void {
+    console.log('window has been resized!');
+    this._renderer.setSize(window.innerWidth, window.innerHeight);
+
+    if ('aspect' in this._camera) {
+      const perspectiveCamera = this._camera as PerspectiveCamera;
+      perspectiveCamera.aspect = window.innerWidth / window.innerHeight;
+      perspectiveCamera.updateProjectionMatrix();
+    }
   }
 
   // #region behaviour
-
-  @thisbind
-  resize(): void {
-    this._renderer.setSize(window.innerWidth, window.innerHeight);
-  }
 
   public start(): this {
     this._lifecycleManager.loopStartables();
@@ -93,7 +100,7 @@ export class FluentRunner {
   }
 
   public setSkybox(skyboxCubemapTexture: CubeTexture): this {
-    FluentRunner._scene.background = skyboxCubemapTexture;
+    Runner._scene.background = skyboxCubemapTexture;
 
     return this;
   }
@@ -127,16 +134,16 @@ export class FluentRunner {
         this._lifecycleManager.disables.push(disable);
       }
 
-      FluentRunner._scene.add(sceneObject);
+      Runner._scene.add(sceneObject);
     }
 
     return this;
   }
 
   public enableOrbitControls(): this {
-    // connect orbit controls.
     this._orbitControl = new OrbitControls(this._camera, this._renderer.domElement);
     this._orbitControl.update();
+    this._orbitControl.enableDamping = true;
     this._orbitControlsEnabled = true;
     return this;
   }
@@ -147,7 +154,7 @@ export class FluentRunner {
   }
 
   public enableAxesHelper(): this {
-    FluentRunner._scene.add(new AxesHelper(300));
+    Runner._scene.add(new AxesHelper(300));
     return this;
   }
 
@@ -167,7 +174,7 @@ export class FluentRunner {
       this._orbitControl!.update();
     }
 
-    this._renderer.render(FluentRunner._scene, this._camera);
+    this._renderer.render(Runner._scene, this._camera);
 
     // update late updatable
     this._lifecycleManager.loopLateUpdatables(dt);

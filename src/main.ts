@@ -4,7 +4,7 @@
 
 import { MeshStandardMaterial } from "three";
 import { Camera } from "./lib/camera";
-import { FluentRunner } from "./playground/fluent-runner";
+import { Runner } from "./playground/runner/runner";
 import { Sun, Earth, Moon } from "./playground/entity";
 import { checkWebGLCompatibility } from "./lib/util/WebGLCompatibilityCheck";
 import { SUN_EMISSIVE_COLOR, SUN_EMISSIVE_INTENSITY } from "./playground/const";
@@ -31,7 +31,7 @@ import { loadResourcesAsync } from "./loadResources";
   } = await loadResourcesAsync();
 
   // start a scene and simulate the solar system.
-  new FluentRunner(
+  new Runner(
     Camera.Builder.setPerspectiveCameraData({
       fov: 75,
       screenDimension: { width: screenWidth, height: screenHeight },
@@ -57,7 +57,7 @@ import { loadResourcesAsync } from "./loadResources";
       ),
       new Moon(moonGeometry, new MeshStandardMaterial({ map: moonDiffuseTexture }))
     )
-    .enableAxesHelper()
+    // .enableAxesHelper()
     .enableOrbitControls()
     .start()
     .run();
