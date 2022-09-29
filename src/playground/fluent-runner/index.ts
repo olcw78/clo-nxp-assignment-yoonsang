@@ -6,18 +6,13 @@ import { LifecycleManager } from "src/lib/object/lifecycle/LifecycleManager";
 import { thisbind } from "src/shared/decorator/thisbind";
 import {
   Camera as ThreeCamera,
-  DirectionalLight,
-  LoadingManager,
-  Mesh,
-  MeshBasicMaterial,
   Object3D,
   Scene,
   WebGLRenderer
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 
-export class Runner {
+export class FluentRunner {
   // #region data
   private readonly _scene: Scene;
   private readonly _camera: ThreeCamera;
@@ -45,20 +40,12 @@ export class Runner {
     // init three scene.
     this._scene = new Scene();
 
-    // connect camera.
+    // init camera and its properties.
     const { camera, cameraData } = cameraIntializer;
     this._camera = camera;
     this._cameraData = cameraData;
     this._scene.add(this._camera);
     this._camera.position.z = 800;
-
-    // const color = 0xffffff;
-    // const intensity = 3;
-    // const light1 = new DirectionalLight(color, intensity);
-    // light1.position.set(0, 10, 0);
-    // light1.target.position.set(-5, 0, 0);
-    // this._scene.add(light1);
-    // this._scene.add(light1.target);
 
     // set renderer.
     this._renderer = new WebGLRenderer();
@@ -76,17 +63,17 @@ export class Runner {
     this._renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
-  public start(): Runner {
+  public start(): FluentRunner {
     this._lifecycleManager.loopStartables();
     return this;
   }
 
-  public showRenderFrameDebug(): Runner {
+  public showRenderFrameDebug(): FluentRunner {
     console.log(this._renderer.domElement.toDataURL());
     return this;
   }
 
-  public setEntities(...sceneObjects: Object3D[]): Runner {
+  public setEntities(...sceneObjects: Object3D[]): FluentRunner {
     if (sceneObjects.length === 0) return this;
 
     for (let i of sceneObjects) {

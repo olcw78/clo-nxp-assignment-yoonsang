@@ -1,6 +1,7 @@
 // import { IObjectResourceSetter } from "src/lib/object/IObjectResourceSetter";
 import { IStartable } from "src/lib/object/lifecycle/IStartable";
 import { IUpdatable } from "src/lib/object/lifecycle/IUpdatable";
+import { SUN_EMISSIVE_COLOR } from "src/playground/const";
 import { BufferGeometry, Group, Material, Mesh, PointLight } from "three";
 
 export class Sun extends Mesh implements IStartable, IUpdatable {
@@ -10,7 +11,7 @@ export class Sun extends Mesh implements IStartable, IUpdatable {
   constructor(geometry: BufferGeometry, materialOrMaterials: Material | Material[]) {
     super(geometry, materialOrMaterials);
 
-    this._sunPointLight = new PointLight(0xeaba1c, 30, 1000);
+    this._sunPointLight = new PointLight(SUN_EMISSIVE_COLOR, 30, 1000);
     this.add(this._sunPointLight);
   }
 

@@ -1,5 +1,19 @@
 type ErrorMessageSelectWebGLorWebGL2 = 1 | 2;
 
+export function checkWebGLCompatibility(): boolean {
+  if (!WebGLCompatibilityCheck.isWebGLAvailable()) {
+    document.body.appendChild(WebGLCompatibilityCheck.getWebGLErrorMessage());
+    return false;
+  }
+
+  if (!WebGLCompatibilityCheck.isWebGL2Available()) {
+    document.body.appendChild(WebGLCompatibilityCheck.getWebGL2ErrorMessage());
+    return false;
+  }
+
+  return true;
+}
+
 export class WebGLCompatibilityCheck {
   public static isWebGLAvailable() {
     try {

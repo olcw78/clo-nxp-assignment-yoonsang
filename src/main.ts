@@ -12,63 +12,47 @@ import {
   TextureLoader
 } from "three";
 import { Camera } from "./lib/camera";
-import { Runner } from "./playground/runner";
+import { FluentRunner } from "./playground/fluent-runner";
 import { Sun, Earth, Moon } from "./playground/entity";
-import { WebGLCompatibilityCheck } from "./lib/util/WebGLCompatibilityCheck";
+import { checkWebGLCompatibility } from "./lib/util/WebGLCompatibilityCheck";
 import { ResourcesLoader } from "./lib/object/ResourcesLoader";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
+import { SUN_EMISSIVE_COLOR } from "./playground/const";
 
 (async function entry() {
-  if (!WebGLCompatibilityCheck.isWebGLAvailable()) {
-    document.body.appendChild(WebGLCompatibilityCheck.getWebGLErrorMessage());
-    return;
-  }
-
-  if (!WebGLCompatibilityCheck.isWebGL2Available()) {
-    document.body.appendChild(WebGLCompatibilityCheck.getWebGL2ErrorMessage());
-    return;
-  }
+  if (!checkWebGLCompatibility()) return;
 
   // start running assignment.
   const screenWidth = window.innerWidth;
   const screenHeight = window.innerHeight;
 
+  // load all the required resources.
   ResourcesLoader.init();
 
-  // const { geometry: sunGeometry, materials: sunMaterials } = await ResourcesLoader.build(
-  //   "asset/sun/geometry.drc",
-  //   ["asset/sun/diffuse.png"]
-  // );
+  const { geometry: sunGeometry, emissiveTexture: sunEmissiveTexture } =
+    await ResourcesLoader.LoadSunResources(
+      "asset/sun/geometry.drc",
+      "asset/sun/diffuse.png"
+    );
 
-  // const { geometry: earthGeometry, materials: earthMaterials } =
-  //   await ResourcesLoader.build("asset/earth/geometry.drc", [
-  //     "asset/earth/diffuse.png",
-  //     "asset/earth/normal.png"
-  //   ]);
+  const {
+    geometry: earthGeometry,
+    diffuseTexture: earthDiffuseTexture,
+    normalTexture: earthNormalTexture
+  } = await ResourcesLoader.LoadEarthResources(
+    "asset/earth/geometry.drc",
+    "asset/earth/diffuse.png",
+    "asset/earth/normal.png"
+  );
 
-  // const { geometry: moonGeometry, materials: moonMaterials } =
-  //   await ResourcesLoader.build("asset/moon/geometry.drc", ["asset/moon/diffuse.png"]);
+  const { geometry: moonGeometry, diffuseTexture: moonDiffuseTexture } =
+    await ResourcesLoader.LoadMoonResources(
+      "asset/moon/geometry.drc",
+      "asset/moon/diffuse.png"
+    );
 
-  const dracoLoader = new DRACOLoader();
-  dracoLoader.setDecoderConfig({ type: "js" });
-  dracoLoader.setDecoderPath("/js/libs/draco/");
-  // dracoLoader.setDecoderPath(
-  //   "https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/js/libs/draco/"
-  // );
-  dracoLoader.preload();
-  const textureLoader = new TextureLoader();
-
-  const earthGeometry = await dracoLoader.loadAsync("asset/earth/geometry.drc");
-  const earthDiffuseTex = await textureLoader.loadAsync("asset/earth/diffuse.png");
-  const earthNormalTex = await textureLoader.loadAsync("asset/earth/normal.png");
-
-  const sunGeometry = await dracoLoader.loadAsync("asset/sun/geometry.drc");
-  const sunDiffuseTex = await textureLoader.loadAsync("asset/sun/diffuse.png");
-
-  const moonGeometry = await dracoLoader.loadAsync("asset/moon/geometry.drc");
-  const moonDiffuseTex = await textureLoader.loadAsync("asset/moon/diffuse.png");
-
-  new Runner(
+  // start a scene and simulate the solar system.
+  new FluentRunner(
     Camera.Builder.setPerspectiveCameraData({
       fov: 75,
       screenDimension: { width: screenWidth, height: screenHeight },
@@ -79,16 +63,19 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
       new Sun(
         sunGeometry,
         new MeshStandardMaterial({
-          emissive: 0xeaba1c,
+          emissive: SUN_EMISSIVE_COLOR,
           emissiveIntensity: 1.5,
-          emissiveMap: sunDiffuseTex
+          emissiveMap: sunEmissiveTexture
         })
       ),
       new Earth(
         earthGeometry,
-        new MeshStandardMaterial({ map: earthDiffuseTex, normalMap: earthNormalTex })
+        new MeshStandardMaterial({
+          map: earthDiffuseTexture,
+          normalMap: earthNormalTexture
+        })
       ),
-      new Moon(moonGeometry, new MeshStandardMaterial({ map: moonDiffuseTex }))
+      new Moon(moonGeometry, new MeshStandardMaterial({ map: moonDiffuseTexture }))
     )
     .enableOrbitControls()
     .start()
