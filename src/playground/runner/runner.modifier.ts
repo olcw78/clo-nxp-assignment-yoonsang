@@ -7,7 +7,7 @@ export class RunnerModifier {
 
   // #region data
 
-  private _debugPrintDeltaTime: boolean = false;
+  private _debugPrintDeltaTime = false;
   public get debugPrintDeltaTime(): boolean {
     return this._debugPrintDeltaTime;
   }
@@ -15,7 +15,7 @@ export class RunnerModifier {
     this._debugPrintDeltaTime = value;
   }
 
-  private _orbitControlsEnabled: boolean = false;
+  private _orbitControlsEnabled = false;
   public get orbitControlsEnabled(): boolean {
     return this._orbitControlsEnabled;
   }
@@ -23,7 +23,7 @@ export class RunnerModifier {
     this._orbitControlsEnabled = value;
   }
 
-  private _debugGUIenabled: boolean = false;
+  private _debugGUIenabled = false;
   public get debugGUIenabled(): boolean {
     return this._debugGUIenabled;
   }
@@ -61,7 +61,11 @@ export class RunnerModifier {
   }
 
   public enableDebugGUI(): Runner {
-    Runner.gui = new lil.GUI();
+    Runner.gui = new lil.GUI({
+      autoPlace: true,
+      width: window.innerWidth * 0.3,
+      title: "CLO Web Graphics Assignment Scene Control Panel"
+    });
     this._debugGUIenabled = true;
     return this._impl;
   }

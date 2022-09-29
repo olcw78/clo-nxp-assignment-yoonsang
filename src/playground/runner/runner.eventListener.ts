@@ -7,6 +7,7 @@ export class RunnerEventListener {
     // attach web browsers event listeners.
     window.addEventListener("resize", this.resize);
     window.addEventListener("dblclick", this.toggleFullScreenMode);
+    window.addEventListener("keydown", this.onKeyDown);
   }
 
   // #region behaviour
@@ -46,6 +47,19 @@ export class RunnerEventListener {
       }
     } else {
       document.exitFullscreen();
+    }
+  }
+
+  @thisbind
+  private onKeyDown(event: KeyboardEvent): void {
+    switch (event.key) {
+      case "h":
+        if (Runner.guiHidden) {
+          Runner.gui.show();
+        } else {
+          Runner.gui.hide();
+        }
+        Runner.guiHidden = !Runner.guiHidden;
     }
   }
 

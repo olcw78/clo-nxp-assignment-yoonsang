@@ -12,9 +12,13 @@ export class Earth extends Mesh implements IStartable, IUpdatable, IGUIable {
   }
 
   onGUI(): void {
-    Runner.gui.add(this.position, "x");
-    Runner.gui.add(this.position, "y");
-    Runner.gui.add(this.position, "z");
+    const folder = Runner.gui.addFolder("earth");
+    folder.add(this.position, "x").min(-400).max(400).step(10).name("pos x");
+    folder.add(this.position, "y").min(-200).max(200).step(10).name("pos y");
+    folder.add(this.position, "z").min(-200).max(200).step(10).name("pos z");
+    folder.add(this, "visible");
+    folder.add(this.material, "wireframe");
+    folder.addColor(this.material, "color").name("tint color");
   }
 
   private readonly _initialUniformScale = 0.03;
@@ -44,7 +48,7 @@ export class Earth extends Mesh implements IStartable, IUpdatable, IGUIable {
 
   onUpdate(deltaTime: number): void {
     if (this._sun) {
-      let sunWorldPos = new Vector3();
+      const sunWorldPos = new Vector3();
       this._sun.getWorldPosition(sunWorldPos);
 
       if (sunWorldPos !== this._pivot.position) {

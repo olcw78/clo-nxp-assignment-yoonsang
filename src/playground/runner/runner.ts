@@ -15,6 +15,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as lil from "lil-gui";
 import { RunnerEventListener } from "./runner.eventListener";
 import { RunnerModifier } from "./runner.modifier";
+import { RunnerSceneGUI } from "./runner.sceneGUI";
 
 type TCameraInitializer = {
   camera: ThreeCamera;
@@ -29,6 +30,7 @@ export class Runner {
 
     new RunnerEventListener(this);
     this._mod = new RunnerModifier(this);
+    this._sceneGUI = new RunnerSceneGUI(this);
 
     // init three scene.
     Runner._scene = new Scene();
@@ -68,6 +70,14 @@ export class Runner {
     Runner._gui = value;
   }
 
+  private static _guiHidden = false;
+  public static get guiHidden() {
+    return Runner._guiHidden;
+  }
+  public static set guiHidden(value) {
+    Runner._guiHidden = value;
+  }
+
   // #endregion static data
 
   // #region data
@@ -104,6 +114,16 @@ export class Runner {
     return this._mod;
   }
 
+  private readonly _sceneGUI: RunnerSceneGUI;
+
+  private _isAnimating = false;
+  public get isAnimating() {
+    return this._isAnimating;
+  }
+  public set isAnimating(value) {
+    this._isAnimating = value;
+  }
+
   // #endregion data
 
   // #region behaviour
@@ -117,6 +137,8 @@ export class Runner {
 
     // start ticking.
     this._clock.autoStart = true;
+    this.isAnimating = true;
+    this._sceneGUI.onGUI();
 
     return this;
   }
@@ -130,7 +152,7 @@ export class Runner {
   public setEntities(...sceneObjects: Object3D[]): this {
     if (sceneObjects.length === 0) return this;
 
-    for (let sceneObject of sceneObjects) {
+    for (const sceneObject of sceneObjects) {
       this._lifecycleManager.addStartable(sceneObject);
       this._lifecycleManager.addUpdatable(sceneObject);
       this._lifecycleManager.addLateUpdatable(sceneObject);
@@ -157,7 +179,7 @@ export class Runner {
     requestAnimationFrame(this.run);
 
     if (this._mod.orbitControlsEnabled) {
-      this._orbitControl!.update();
+      this._orbitControl?.update();
     }
 
     this._renderer.render(Runner._scene, this._camera);

@@ -19,9 +19,13 @@ export class Sun extends Mesh implements IStartable, IUpdatable, IGUIable {
   private readonly _rotateAmountPerSecondInEulerAngles = 12 * DEG_TO_RAD;
 
   onGUI(): void {
-    Runner.gui.add(this.position, "x");
-    Runner.gui.add(this.position, "y");
-    Runner.gui.add(this.position, "z");
+    const folder = Runner.gui.addFolder("sun");
+    folder.add(this.position, "x").min(-200).max(200).step(10).name("pos x");
+    folder.add(this.position, "y").min(-200).max(200).step(10).name("pos y");
+    folder.add(this.position, "z").min(-200).max(200).step(10).name("pos z");
+    folder.add(this, "visible");
+    folder.add(this.material, "wireframe");
+    folder.addColor(this.material, "color").name("tint color");
   }
 
   onStart(): void {
