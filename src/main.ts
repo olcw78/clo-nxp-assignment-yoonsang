@@ -77,6 +77,7 @@ import { SUN_EMISSIVE_COLOR, SUN_EMISSIVE_INTENSITY } from "./playground/const";
       ),
       new Moon(moonGeometry, new MeshStandardMaterial({ map: moonDiffuseTexture }))
     )
+    .enableAxesHelper()
     .enableOrbitControls()
     .start()
     .run();

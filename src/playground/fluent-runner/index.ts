@@ -5,7 +5,14 @@ import { IStartable } from "src/lib/object/lifecycle/IStartable";
 import { IUpdatable } from "src/lib/object/lifecycle/IUpdatable";
 import { LifecycleManager } from "src/lib/object/lifecycle/LifecycleManager";
 import { thisbind } from "src/shared/decorator/thisbind";
-import { Camera as ThreeCamera, Clock, Object3D, Scene, WebGLRenderer } from "three";
+import {
+  AxesHelper,
+  Camera as ThreeCamera,
+  Clock,
+  Object3D,
+  Scene,
+  WebGLRenderer
+} from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 export class FluentRunner {
@@ -15,6 +22,8 @@ export class FluentRunner {
   private readonly _renderer: WebGLRenderer;
 
   private readonly _cameraData: ICameraData;
+  private _debugPrintDeltaTime: boolean = false;
+
   public get cameraDataAsPerspective(): PerspectiveCameraData {
     return this._cameraData as PerspectiveCameraData;
   }
@@ -28,6 +37,7 @@ export class FluentRunner {
   private _orbitControlsEnabled: boolean = false;
 
   private readonly _clock: Clock = new Clock();
+  private static sceneObjects?: Object3D[];
 
   // #endregion data
 
@@ -75,6 +85,8 @@ export class FluentRunner {
   public setEntities(...sceneObjects: Object3D[]): FluentRunner {
     if (sceneObjects.length === 0) return this;
 
+    FluentRunner.sceneObjects = sceneObjects;
+
     for (let i of sceneObjects) {
       this._lifecycleManager.startables.push(i as unknown as IStartable);
       this._lifecycleManager.updatables.push(i as unknown as IUpdatable);
@@ -92,12 +104,26 @@ export class FluentRunner {
     return this;
   }
 
-  // public enableSceneHandle()
+  public enableDebugPrintDeltaTime(): this {
+    this._debugPrintDeltaTime = true;
+    return this;
+  }
+
+  public enableAxesHelper(): this {
+    this._scene.add(new AxesHelper(300));
+    return this;
+  }
+
+  public static findObject(objectName: string): Object3D | undefined {
+    return FluentRunner.sceneObjects?.find(obj => obj.name === objectName);
+  }
 
   @thisbind
   public run(): void {
     const dt = this._clock.getDelta();
-    console.log("current delta time: " + dt);
+    if (this._debugPrintDeltaTime) {
+      console.log("current delta time: " + dt);
+    }
 
     // update updatable
     this._lifecycleManager.loopUpdatables(dt);
