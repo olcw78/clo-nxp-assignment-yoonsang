@@ -15,9 +15,15 @@ import {
   CubeTexture,
   Object3D,
   Scene,
-  WebGLRenderer, PerspectiveCamera
+  WebGLRenderer,
+  PerspectiveCamera
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+
+type TCameraInitializer = {
+  camera: ThreeCamera;
+  cameraData: ICameraData;
+};
 
 export class Runner {
   // #region data
@@ -49,10 +55,11 @@ export class Runner {
 
   // #endregion data
 
-  public constructor(cameraIntializer: {
-    camera: ThreeCamera;
-    cameraData: ICameraData;
-  }) {
+  public constructor(cameraIntializer: TCameraInitializer | undefined) {
+    if (!cameraIntializer) {
+      throw new Error("Fail to intialize the camera!");
+    }
+
     // init three scene.
     Runner._scene = new Scene();
 
@@ -68,21 +75,33 @@ export class Runner {
     // set renderer.
     this._renderer = new WebGLRenderer({ antialias: true });
     this._renderer.setSize(window.innerWidth, window.innerHeight);
+    this._renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     // attach dom canvas.
     document.body.appendChild(this._renderer.domElement);
     window.addEventListener("resize", this.resize);
+    window.addEventListener("dblclick", this.toggleFullScreenMode);
   }
 
   @thisbind
   private resize(): void {
-    console.log('window has been resized!');
-    this._renderer.setSize(window.innerWidth, window.innerHeight);
-
-    if ('aspect' in this._camera) {
+    if ("aspect" in this._camera) {
       const perspectiveCamera = this._camera as PerspectiveCamera;
       perspectiveCamera.aspect = window.innerWidth / window.innerHeight;
       perspectiveCamera.updateProjectionMatrix();
+    } else {
+      // todo: update resizing window logic on using Orthographic Camera.
+    }
+
+    this._renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  @thisbind
+  private toggleFullScreenMode(): void {
+    if (!document.fullscreenElement) {
+      this._renderer.domElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
     }
   }
 
