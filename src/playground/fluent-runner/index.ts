@@ -1,6 +1,9 @@
 import { ICameraData } from "src/lib/camera/camera/Camera.interface";
 import { OrthographicCameraData } from "src/lib/camera/orthographic/OrthographicCamera.data";
 import { PerspectiveCameraData } from "src/lib/camera/perspective/PerspectiveCamera.data";
+import { IDestroyable } from "src/lib/object/lifecycle/IDestroyable";
+import { IDisable } from "src/lib/object/lifecycle/IDisable";
+import { ILateUpdatable } from "src/lib/object/lifecycle/ILateUpdatable";
 import { IStartable } from "src/lib/object/lifecycle/IStartable";
 import { IUpdatable } from "src/lib/object/lifecycle/IUpdatable";
 import { LifecycleManager } from "src/lib/object/lifecycle/LifecycleManager";
@@ -11,6 +14,7 @@ import {
   Clock,
   Object3D,
   Scene,
+  Vector3,
   WebGLRenderer
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
@@ -53,7 +57,10 @@ export class FluentRunner {
     this._camera = camera;
     this._cameraData = cameraData;
     this._scene.add(this._camera);
-    this._camera.position.z = 800;
+
+    this._camera.position.y = 300;
+    this._camera.position.z = 400;
+    // this._camera.lookAt(new Vector3(0, 0, 0));
 
     // set renderer.
     this._renderer = new WebGLRenderer({ antialias: true });
@@ -87,10 +94,33 @@ export class FluentRunner {
 
     FluentRunner.sceneObjects = sceneObjects;
 
-    for (let i of sceneObjects) {
-      this._lifecycleManager.startables.push(i as unknown as IStartable);
-      this._lifecycleManager.updatables.push(i as unknown as IUpdatable);
-      this._scene.add(i);
+    for (let sceneObject of sceneObjects) {
+      const startable = sceneObject as unknown as IStartable;
+      if ("onStart" in startable) {
+        this._lifecycleManager.startables.push(startable);
+      }
+
+      const updatable = sceneObject as unknown as IUpdatable;
+      if ("onUpdate" in updatable) {
+        this._lifecycleManager.updatables.push(updatable);
+      }
+
+      const lateUpdatable = sceneObject as unknown as ILateUpdatable;
+      if ("onLateUpdate" in lateUpdatable) {
+        this._lifecycleManager.lateUpdatables.push(lateUpdatable);
+      }
+
+      const destroyable = sceneObject as unknown as IDestroyable;
+      if ("onDestroy" in destroyable) {
+        this._lifecycleManager.destroyables.push(destroyable);
+      }
+
+      const disable = sceneObject as unknown as IDisable;
+      if ("onDisable" in disable) {
+        this._lifecycleManager.disables.push(disable);
+      }
+
+      this._scene.add(sceneObject);
     }
 
     return this;

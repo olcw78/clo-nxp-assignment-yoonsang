@@ -33,7 +33,7 @@ export class LifecycleManager {
     if (this._startables.length === 0) return;
 
     for (let e of this._startables) {
-      e.onStart();
+      e?.onStart();
     }
   }
 
@@ -41,7 +41,7 @@ export class LifecycleManager {
     if (this._updatables.length === 0) return;
 
     for (let e of this._updatables) {
-      e.onUpdate(deltaTime);
+      e?.onUpdate(deltaTime);
     }
   }
 
@@ -49,7 +49,7 @@ export class LifecycleManager {
     if (this._lateUpdatables.length === 0) return;
 
     for (let e of this._lateUpdatables) {
-      e.onLateUpdate(deltaTime);
+      e?.onLateUpdate(deltaTime);
     }
   }
 
@@ -57,7 +57,7 @@ export class LifecycleManager {
     if (this._disables.length === 0) return;
 
     for (let e of this._disables) {
-      e.onDisable();
+      e?.onDisable();
     }
   }
 
@@ -65,7 +65,7 @@ export class LifecycleManager {
     if (this._destroyables.length === 0) return;
 
     for (let e of this._destroyables) {
-      e.onDestroy();
+      e?.onDestroy();
     }
   }
 }
