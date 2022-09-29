@@ -2,6 +2,8 @@
 // 28 Sep 2022 이윤상 CLO Virtual Fashion NXP Web Graphics Assignment.
 //
 
+import "resetcss/reset.min.css";
+
 import { MeshStandardMaterial } from "three";
 import { Camera } from "./lib/camera";
 import { Runner } from "./playground/runner/runner";
@@ -58,6 +60,7 @@ import { loadResourcesAsync } from "./loadResources";
       new Moon(moonGeometry, new MeshStandardMaterial({ map: moonDiffuseTexture }))
     )
     // .enableAxesHelper()
+    .enableDebugGUI()
     .enableOrbitControls()
     .start()
     .run();
