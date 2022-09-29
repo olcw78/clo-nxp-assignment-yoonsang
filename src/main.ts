@@ -17,7 +17,7 @@ import { Sun, Earth, Moon } from "./playground/entity";
 import { checkWebGLCompatibility } from "./lib/util/WebGLCompatibilityCheck";
 import { ResourcesLoader } from "./lib/object/ResourcesLoader";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
-import { SUN_EMISSIVE_COLOR } from "./playground/const";
+import { SUN_EMISSIVE_COLOR, SUN_EMISSIVE_INTENSITY } from "./playground/const";
 
 (async function entry() {
   if (!checkWebGLCompatibility()) return;
@@ -64,7 +64,7 @@ import { SUN_EMISSIVE_COLOR } from "./playground/const";
         sunGeometry,
         new MeshStandardMaterial({
           emissive: SUN_EMISSIVE_COLOR,
-          emissiveIntensity: 1.5,
+          emissiveIntensity: SUN_EMISSIVE_INTENSITY,
           emissiveMap: sunEmissiveTexture
         })
       ),
