@@ -12,16 +12,20 @@ import {
   AxesHelper,
   Camera as ThreeCamera,
   Clock,
+  CubeTexture,
   Object3D,
   Scene,
-  Vector3,
   WebGLRenderer
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 export class FluentRunner {
   // #region data
-  private readonly _scene: Scene;
+  private static _scene: Scene;
+  public static get scene(): Scene {
+    return FluentRunner._scene;
+  }
+
   private readonly _camera: ThreeCamera;
   private readonly _renderer: WebGLRenderer;
 
@@ -41,7 +45,6 @@ export class FluentRunner {
   private _orbitControlsEnabled: boolean = false;
 
   private readonly _clock: Clock = new Clock();
-  private static sceneObjects?: Object3D[];
 
   // #endregion data
 
@@ -50,13 +53,13 @@ export class FluentRunner {
     cameraData: ICameraData;
   }) {
     // init three scene.
-    this._scene = new Scene();
+    FluentRunner._scene = new Scene();
 
     // init camera and its properties.
     const { camera, cameraData } = cameraIntializer;
     this._camera = camera;
     this._cameraData = cameraData;
-    this._scene.add(this._camera);
+    FluentRunner._scene.add(this._camera);
 
     this._camera.position.y = 300;
     this._camera.position.z = 400;
@@ -78,21 +81,25 @@ export class FluentRunner {
     this._renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
-  public start(): FluentRunner {
+  public start(): this {
     this._lifecycleManager.loopStartables();
     this._clock.autoStart = true;
     return this;
   }
 
-  public showRenderFrameDebug(): FluentRunner {
+  public showRenderFrameDebug(): this {
     console.log(this._renderer.domElement.toDataURL());
     return this;
   }
 
-  public setEntities(...sceneObjects: Object3D[]): FluentRunner {
-    if (sceneObjects.length === 0) return this;
+  public setSkybox(skyboxCubemapTexture: CubeTexture): this {
+    FluentRunner._scene.background = skyboxCubemapTexture;
 
-    FluentRunner.sceneObjects = sceneObjects;
+    return this;
+  }
+
+  public setEntities(...sceneObjects: Object3D[]): this {
+    if (sceneObjects.length === 0) return this;
 
     for (let sceneObject of sceneObjects) {
       const startable = sceneObject as unknown as IStartable;
@@ -120,7 +127,7 @@ export class FluentRunner {
         this._lifecycleManager.disables.push(disable);
       }
 
-      this._scene.add(sceneObject);
+      FluentRunner._scene.add(sceneObject);
     }
 
     return this;
@@ -140,12 +147,8 @@ export class FluentRunner {
   }
 
   public enableAxesHelper(): this {
-    this._scene.add(new AxesHelper(300));
+    FluentRunner._scene.add(new AxesHelper(300));
     return this;
-  }
-
-  public static findObject(objectName: string): Object3D | undefined {
-    return FluentRunner.sceneObjects?.find(obj => obj.name === objectName);
   }
 
   @thisbind
@@ -164,7 +167,7 @@ export class FluentRunner {
       this._orbitControl!.update();
     }
 
-    this._renderer.render(this._scene, this._camera);
+    this._renderer.render(FluentRunner._scene, this._camera);
 
     // update late updatable
     this._lifecycleManager.loopLateUpdatables(dt);

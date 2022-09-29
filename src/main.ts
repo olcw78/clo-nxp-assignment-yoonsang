@@ -2,54 +2,33 @@
 // 28 Sep 2022 이윤상 CLO Virtual Fashion NXP Web Graphics Assignment.
 //
 
-import {
-  Color,
-  MeshBasicMaterial,
-  MeshLambertMaterial,
-  MeshPhysicalMaterial,
-  MeshStandardMaterial,
-  SphereGeometry,
-  TextureLoader
-} from "three";
+import { MeshStandardMaterial } from "three";
 import { Camera } from "./lib/camera";
 import { FluentRunner } from "./playground/fluent-runner";
 import { Sun, Earth, Moon } from "./playground/entity";
 import { checkWebGLCompatibility } from "./lib/util/WebGLCompatibilityCheck";
-import { ResourcesLoader } from "./lib/object/ResourcesLoader";
-import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 import { SUN_EMISSIVE_COLOR, SUN_EMISSIVE_INTENSITY } from "./playground/const";
+import { loadResourcesAsync } from "./loadResources";
 
 (async function entry() {
-  if (!checkWebGLCompatibility()) return;
+  if (!checkWebGLCompatibility()) {
+    return;
+  }
 
   // start running assignment.
   const screenWidth = window.innerWidth;
   const screenHeight = window.innerHeight;
 
-  // load all the required resources.
-  ResourcesLoader.init();
-
-  const { geometry: sunGeometry, emissiveTexture: sunEmissiveTexture } =
-    await ResourcesLoader.LoadSunResources(
-      "asset/sun/geometry.drc",
-      "asset/sun/diffuse.png"
-    );
-
   const {
-    geometry: earthGeometry,
-    diffuseTexture: earthDiffuseTexture,
-    normalTexture: earthNormalTexture
-  } = await ResourcesLoader.LoadEarthResources(
-    "asset/earth/geometry.drc",
-    "asset/earth/diffuse.png",
-    "asset/earth/normal.png"
-  );
-
-  const { geometry: moonGeometry, diffuseTexture: moonDiffuseTexture } =
-    await ResourcesLoader.LoadMoonResources(
-      "asset/moon/geometry.drc",
-      "asset/moon/diffuse.png"
-    );
+    sunGeometry,
+    sunEmissiveTexture,
+    earthGeometry,
+    earthDiffuseTexture,
+    earthNormalTexture,
+    moonGeometry,
+    moonDiffuseTexture,
+    skyboxTexture1
+  } = await loadResourcesAsync();
 
   // start a scene and simulate the solar system.
   new FluentRunner(
@@ -59,6 +38,7 @@ import { SUN_EMISSIVE_COLOR, SUN_EMISSIVE_INTENSITY } from "./playground/const";
       nearFar: { near: 0.1, far: 5000 }
     }).build()
   )
+    .setSkybox(skyboxTexture1)
     .setEntities(
       new Sun(
         sunGeometry,

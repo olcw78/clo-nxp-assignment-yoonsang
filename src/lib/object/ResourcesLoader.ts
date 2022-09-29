@@ -1,4 +1,10 @@
-import { BufferGeometry, Texture, TextureLoader } from "three";
+import {
+  BufferGeometry,
+  CubeTexture,
+  CubeTextureLoader,
+  Texture,
+  TextureLoader
+} from "three";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 
 type TResultLoadingEarthResources = {
@@ -32,7 +38,11 @@ export class ResourcesLoader {
     this.dracoLoader.preload();
   }
 
-  public static async LoadEarthResources(
+  public static loadCubemapTextures(skyboxTexturesUris: string[]): CubeTexture {
+    return new CubeTextureLoader().load(skyboxTexturesUris);
+  }
+
+  public static async loadEarthResources(
     earthGeometryPath: string,
     earthDiffuseMapPath: string,
     earthNormalMapPath: string
@@ -48,7 +58,7 @@ export class ResourcesLoader {
     };
   }
 
-  public static async LoadSunResources(
+  public static async loadSunResources(
     sunGeometryPath: string,
     sunEmissiveMapPath: string
   ): Promise<TResultLoadingSunResources> {
@@ -61,7 +71,7 @@ export class ResourcesLoader {
     };
   }
 
-  public static async LoadMoonResources(
+  public static async loadMoonResources(
     moonGeometryPath: string,
     moonDiffuseMapPath: string
   ): Promise<TResultLoadingMoonResources> {
