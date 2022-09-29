@@ -33,7 +33,8 @@ export class Runner {
 
   private readonly _lifecycleManager: LifecycleManager = new LifecycleManager();
 
-  // private _orbitControl: OrbitControls;
+  private _orbitControl?: OrbitControls;
+  private _orbitControlsEnabled: boolean = false;
 
   // #endregion data
 
@@ -49,15 +50,15 @@ export class Runner {
     this._camera = camera;
     this._cameraData = cameraData;
     this._scene.add(this._camera);
-    this._camera.position.z = 2000;
+    this._camera.position.z = 800;
 
-    const color = 0xffffff;
-    const intensity = 3;
-    const light = new DirectionalLight(color, intensity);
-    light.position.set(0, 10, 0);
-    light.target.position.set(-5, 0, 0);
-    this._scene.add(light);
-    this._scene.add(light.target);
+    // const color = 0xffffff;
+    // const intensity = 3;
+    // const light1 = new DirectionalLight(color, intensity);
+    // light1.position.set(0, 10, 0);
+    // light1.target.position.set(-5, 0, 0);
+    // this._scene.add(light1);
+    // this._scene.add(light1.target);
 
     // set renderer.
     this._renderer = new WebGLRenderer();
@@ -66,21 +67,21 @@ export class Runner {
     // attach dom canvas.
     document.body.appendChild(this._renderer.domElement);
     document.body.addEventListener("resize", this.resize);
-
-    // connect orbit controls.
-    // this._orbitControl = new OrbitControls(this._camera, this._renderer.domElement);
-    // this._orbitControl.target.set(0, 5, 0);
   }
+
+  // #region behaviour
 
   @thisbind
   resize(): void {
     this._renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
-  // #region behaviour
-
   public start(): Runner {
     this._lifecycleManager.loopStartables();
+    return this;
+  }
+
+  public showRenderFrameDebug(): Runner {
     console.log(this._renderer.domElement.toDataURL());
     return this;
   }
@@ -96,19 +97,31 @@ export class Runner {
     return this;
   }
 
+  public enableOrbitControls(): this {
+    // connect orbit controls.
+    this._orbitControl = new OrbitControls(this._camera, this._renderer.domElement);
+    this._orbitControl.update();
+    this._orbitControlsEnabled = true;
+    return this;
+  }
+
   // public enableSceneHandle()
 
   @thisbind
   public run(): void {
-    console.log("runner runs!");
+    // console.log("runner runs!");
 
-    // this._lifecycleManager.loopUpdatables(0);
+    this._lifecycleManager.loopUpdatables(0);
 
     requestAnimationFrame(this.run);
-    // this._orbitControl.update();
+
+    if (this._orbitControlsEnabled) {
+      this._orbitControl!.update();
+    }
+
     this._renderer.render(this._scene, this._camera);
 
-    // this._lifecycleManager.loopLateUpdatables(0);
+    this._lifecycleManager.loopLateUpdatables(0);
   }
 
   // #endregion behaviour

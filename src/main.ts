@@ -3,9 +3,11 @@
 //
 
 import {
+  Color,
   MeshBasicMaterial,
   MeshLambertMaterial,
   MeshPhysicalMaterial,
+  MeshStandardMaterial,
   SphereGeometry,
   TextureLoader
 } from "three";
@@ -70,17 +72,25 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
     Camera.Builder.setPerspectiveCameraData({
       fov: 75,
       screenDimension: { width: screenWidth, height: screenHeight },
-      nearFar: { near: 0.1, far: 100000 }
+      nearFar: { near: 0.1, far: 5000 }
     }).build()
   )
     .setEntities(
-      new Sun(sunGeometry, new MeshLambertMaterial({ map: sunDiffuseTex })),
+      new Sun(
+        sunGeometry,
+        new MeshStandardMaterial({
+          emissive: 0xeaba1c,
+          emissiveIntensity: 1.5,
+          emissiveMap: sunDiffuseTex
+        })
+      ),
       new Earth(
         earthGeometry,
-        new MeshLambertMaterial({ map: earthDiffuseTex, normalMap: earthNormalTex })
+        new MeshStandardMaterial({ map: earthDiffuseTex, normalMap: earthNormalTex })
       ),
-      new Moon(moonGeometry, new MeshLambertMaterial({ map: moonDiffuseTex }))
+      new Moon(moonGeometry, new MeshStandardMaterial({ map: moonDiffuseTex }))
     )
+    .enableOrbitControls()
     .start()
     .run();
 })();
