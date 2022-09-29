@@ -1,25 +1,20 @@
 import { ICameraData } from "src/lib/camera/camera/Camera.interface";
 import { OrthographicCameraData } from "src/lib/camera/orthographic/OrthographicCamera.data";
 import { PerspectiveCameraData } from "src/lib/camera/perspective/PerspectiveCamera.data";
-import { IDestroyable } from "src/lib/object/lifecycle/IDestroyable";
-import { IDisable } from "src/lib/object/lifecycle/IDisable";
-import { ILateUpdatable } from "src/lib/object/lifecycle/ILateUpdatable";
-import { IStartable } from "src/lib/object/lifecycle/IStartable";
-import { IUpdatable } from "src/lib/object/lifecycle/IUpdatable";
 import { LifecycleManager } from "src/lib/object/lifecycle/LifecycleManager";
 import { thisbind } from "src/shared/decorator/thisbind";
 import {
-  AxesHelper,
   Camera as ThreeCamera,
   Clock,
   CubeTexture,
   Object3D,
   Scene,
-  WebGLRenderer,
-  PerspectiveCamera
+  WebGLRenderer
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as lil from "lil-gui";
+import { RunnerEventListener } from "./runner.eventListener";
+import { RunnerModifier } from "./runner.modifier";
 
 type TCameraInitializer = {
   camera: ThreeCamera;
@@ -27,50 +22,13 @@ type TCameraInitializer = {
 };
 
 export class Runner {
-  // #region data
-
-  private static _scene: Scene;
-  public static get scene(): Scene {
-    return Runner._scene;
-  }
-
-  private readonly _camera: ThreeCamera;
-  private readonly _renderer: WebGLRenderer;
-
-  private readonly _cameraData: ICameraData;
-  private _debugPrintDeltaTime: boolean = false;
-
-  public get cameraDataAsPerspective(): PerspectiveCameraData {
-    return this._cameraData as PerspectiveCameraData;
-  }
-
-  public get cameraDataAsOrthographic(): OrthographicCameraData {
-    return this._cameraData as OrthographicCameraData;
-  }
-
-  private readonly _lifecycleManager: LifecycleManager = new LifecycleManager();
-
-  private _orbitControl?: OrbitControls;
-  private _orbitControlsEnabled: boolean = false;
-
-  private readonly _clock = new Clock();
-
-  private static _gui: lil.GUI;
-  public static get gui(): lil.GUI {
-    return Runner._gui;
-  }
-
-  private static _guiEnabled: boolean = false;
-  public static get guiEnabled(): boolean {
-    return Runner._guiEnabled;
-  }
-
-  // #endregion data
-
   public constructor(cameraIntializer: TCameraInitializer | undefined) {
     if (!cameraIntializer) {
       throw new Error("Fail to intialize the camera!");
     }
+
+    new RunnerEventListener(this);
+    this._mod = new RunnerModifier(this);
 
     // init three scene.
     Runner._scene = new Scene();
@@ -92,59 +50,88 @@ export class Runner {
     // attach dom canvas.
     document.body.appendChild(this._renderer.domElement);
 
-    // attach web browsers event listeners.
-    window.addEventListener("resize", this.resize);
-    window.addEventListener("dblclick", this.toggleFullScreenMode);
+    this._orbitControl = new OrbitControls(this._camera, this._renderer.domElement);
   }
 
-  @thisbind
-  private resize(): void {
-    if ("aspect" in this._camera) {
-      const perspectiveCamera = this._camera as PerspectiveCamera;
-      perspectiveCamera.aspect = window.innerWidth / window.innerHeight;
-      perspectiveCamera.updateProjectionMatrix();
-    } else {
-      // todo: update resizing window logic on using Orthographic Camera.
-    }
+  // #region static data
 
-    this._renderer.setSize(window.innerWidth, window.innerHeight);
+  private static _scene: Scene;
+  public static get scene(): Scene {
+    return Runner._scene;
   }
 
-  @thisbind
-  private toggleFullScreenMode(): void {
-    const fullscreenElement =
-      document.fullscreenElement ??
-      document.webkitFullscreenElement ??
-      document.mozFullscreenElement ??
-      document.msFullscreenElement;
-
-    if (!fullscreenElement) {
-      const canvas = this._renderer.domElement;
-
-      if (canvas.requestFullscreen) {
-        canvas.requestFullscreen();
-      } else if (canvas.webkitRequestFullscreen) {
-        canvas.webkitRequestFullscreen();
-      } else if (canvas.mozRequestFullscreen) {
-        canvas.mozRequestFullscreen();
-      } else if (canvas.msRequestFullscreen) {
-        canvas.msRequestFullscreen();
-      }
-    } else {
-      document.exitFullscreen();
-    }
+  private static _gui: lil.GUI;
+  public static get gui(): lil.GUI {
+    return Runner._gui;
   }
+  public static set gui(value: lil.GUI) {
+    Runner._gui = value;
+  }
+
+  // #endregion static data
+
+  // #region data
+
+  private readonly _camera: ThreeCamera;
+  public get camera(): ThreeCamera {
+    return this._camera;
+  }
+
+  private readonly _renderer: WebGLRenderer;
+  public get renderer(): WebGLRenderer {
+    return this._renderer;
+  }
+
+  private readonly _cameraData: ICameraData;
+  public get cameraDataAsPerspective(): PerspectiveCameraData {
+    return this._cameraData as PerspectiveCameraData;
+  }
+  public get cameraDataAsOrthographic(): OrthographicCameraData {
+    return this._cameraData as OrthographicCameraData;
+  }
+
+  private _debugPrintDeltaTime: boolean = false;
+  public get debugPrintDeltaTime(): boolean {
+    return this._debugPrintDeltaTime;
+  }
+  public set debugPrintDeltaTime(value: boolean) {
+    this._debugPrintDeltaTime = value;
+  }
+
+  private readonly _lifecycleManager: LifecycleManager = new LifecycleManager();
+
+  private readonly _orbitControl?: OrbitControls;
+  public get orbitControl(): OrbitControls | undefined {
+    return this._orbitControl;
+  }
+
+  private _orbitControlsEnabled: boolean = false;
+  public get orbitControlsEnabled(): boolean {
+    return this._orbitControlsEnabled;
+  }
+  public set orbitControlsEnabled(value: boolean) {
+    this._orbitControlsEnabled = value;
+  }
+
+  private readonly _clock = new Clock();
+
+  private readonly _mod: RunnerModifier;
+  public get mod(): RunnerModifier {
+    return this._mod;
+  }
+
+  // #endregion data
 
   // #region behaviour
 
   public start(): this {
+    // start lifecycles.
     this._lifecycleManager.loopStartables();
-    this._clock.autoStart = true;
-    return this;
-  }
+    this._lifecycleManager.loopGUIables();
 
-  public showRenderFrameDebug(): this {
-    console.log(this._renderer.domElement.toDataURL());
+    // start ticking.
+    this._clock.autoStart = true;
+
     return this;
   }
 
@@ -158,58 +145,15 @@ export class Runner {
     if (sceneObjects.length === 0) return this;
 
     for (let sceneObject of sceneObjects) {
-      const startable = sceneObject as unknown as IStartable;
-      if ("onStart" in startable) {
-        this._lifecycleManager.startables.push(startable);
-      }
-
-      const updatable = sceneObject as unknown as IUpdatable;
-      if ("onUpdate" in updatable) {
-        this._lifecycleManager.updatables.push(updatable);
-      }
-
-      const lateUpdatable = sceneObject as unknown as ILateUpdatable;
-      if ("onLateUpdate" in lateUpdatable) {
-        this._lifecycleManager.lateUpdatables.push(lateUpdatable);
-      }
-
-      const destroyable = sceneObject as unknown as IDestroyable;
-      if ("onDestroy" in destroyable) {
-        this._lifecycleManager.destroyables.push(destroyable);
-      }
-
-      const disable = sceneObject as unknown as IDisable;
-      if ("onDisable" in disable) {
-        this._lifecycleManager.disables.push(disable);
-      }
+      this._lifecycleManager.addStartable(sceneObject);
+      this._lifecycleManager.addUpdatable(sceneObject);
+      this._lifecycleManager.addLateUpdatable(sceneObject);
+      this._lifecycleManager.addDestroyable(sceneObject);
+      this._lifecycleManager.addDisable(sceneObject);
+      this._lifecycleManager.addGUIable(sceneObject);
 
       Runner._scene.add(sceneObject);
     }
-
-    return this;
-  }
-
-  public enableOrbitControls(): this {
-    this._orbitControl = new OrbitControls(this._camera, this._renderer.domElement);
-    this._orbitControl.update();
-    this._orbitControl.enableDamping = true;
-    this._orbitControlsEnabled = true;
-    return this;
-  }
-
-  public enableDebugPrintDeltaTime(): this {
-    this._debugPrintDeltaTime = true;
-    return this;
-  }
-
-  public enableAxesHelper(): this {
-    Runner._scene.add(new AxesHelper(300));
-    return this;
-  }
-
-  public enableDebugGUI(): this {
-    Runner._gui = new lil.GUI();
-    Runner._guiEnabled = true;
 
     return this;
   }

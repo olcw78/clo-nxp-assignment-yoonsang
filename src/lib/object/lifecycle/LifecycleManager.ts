@@ -1,32 +1,26 @@
+import { Object3D } from "three";
 import { IDestroyable } from "./IDestroyable";
 import { IDisable } from "./IDisable";
+import { IGUIable } from "./IGUIable";
 import { ILateUpdatable } from "./ILateUpdatable";
 import { IStartable } from "./IStartable";
 import { IUpdatable } from "./IUpdatable";
 
 export class LifecycleManager {
   private readonly _startables: IStartable[] = [];
-  public get startables(): IStartable[] {
-    return this._startables;
-  }
   private readonly _updatables: IUpdatable[] = [];
-  public get updatables(): IUpdatable[] {
-    return this._updatables;
-  }
-
   private readonly _lateUpdatables: ILateUpdatable[] = [];
-  public get lateUpdatables(): ILateUpdatable[] {
-    return this._lateUpdatables;
-  }
-
   private readonly _disables: IDisable[] = [];
-  public get disables(): IDisable[] {
-    return this._disables;
-  }
-
   private readonly _destroyables: IDestroyable[] = [];
-  public get destroyables(): IDestroyable[] {
-    return this._destroyables;
+  private readonly _GUIables: IGUIable[] = [];
+
+  // #region startable
+
+  public addStartable(object: Object3D): void {
+    const src = object as unknown as IStartable;
+    if ("onStart" in src) {
+      this._startables.push(src);
+    }
   }
 
   public loopStartables(): void {
@@ -34,6 +28,17 @@ export class LifecycleManager {
 
     for (let e of this._startables) {
       e?.onStart();
+    }
+  }
+
+  // #endregion startable
+
+  // #region updatable
+
+  public addUpdatable(object: Object3D): void {
+    const src = object as unknown as IUpdatable;
+    if ("onUpdate" in src) {
+      this._updatables.push(src);
     }
   }
 
@@ -45,11 +50,33 @@ export class LifecycleManager {
     }
   }
 
+  // #endregion updatable
+
+  // #region late updatable
+
+  public addLateUpdatable(object: Object3D): void {
+    const src = object as unknown as ILateUpdatable;
+    if ("onLateUpdate" in src) {
+      this._lateUpdatables.push(src);
+    }
+  }
+
   public loopLateUpdatables(deltaTime: number): void {
     if (this._lateUpdatables.length === 0) return;
 
     for (let e of this._lateUpdatables) {
       e?.onLateUpdate(deltaTime);
+    }
+  }
+
+  // #endregion late updatable
+
+  // #region disable
+
+  public addDisable(object: Object3D): void {
+    const src = object as unknown as IDisable;
+    if ("onDisable" in src) {
+      this._disables.push(src);
     }
   }
 
@@ -61,6 +88,17 @@ export class LifecycleManager {
     }
   }
 
+  // #endregion disable
+
+  // #region destroyable
+
+  public addDestroyable(object: Object3D): void {
+    const src = object as unknown as IDestroyable;
+    if ("onDestroy" in src) {
+      this._destroyables.push(src);
+    }
+  }
+
   public loopDestroyables(): void {
     if (this._destroyables.length === 0) return;
 
@@ -68,4 +106,25 @@ export class LifecycleManager {
       e?.onDestroy();
     }
   }
+
+  // #endregion destroyable
+
+  // #region gui able
+
+  public addGUIable(object: Object3D): void {
+    const src = object as unknown as IGUIable;
+    if ("onGUI" in src) {
+      this._GUIables.push(src);
+    }
+  }
+
+  public loopGUIables(): void {
+    if (this._GUIables.length === 0) return;
+
+    for (let e of this._GUIables) {
+      e?.onGUI();
+    }
+  }
+
+  // #endregion gui able
 }

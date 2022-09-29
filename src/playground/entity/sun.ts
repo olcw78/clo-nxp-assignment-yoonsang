@@ -1,15 +1,12 @@
 // import { IObjectResourceSetter } from "src/lib/object/IObjectResourceSetter";
+import { IGUIable } from "src/lib/object/lifecycle/IGUIable";
 import { IStartable } from "src/lib/object/lifecycle/IStartable";
 import { IUpdatable } from "src/lib/object/lifecycle/IUpdatable";
 import { DEG_TO_RAD, SUN_EMISSIVE_COLOR } from "src/playground/const";
-import {
-  BufferGeometry,
-  Material,
-  Mesh,
-  PointLight
-} from "three";
+import { BufferGeometry, Material, Mesh, PointLight } from "three";
+import { Runner } from "../runner/runner";
 
-export class Sun extends Mesh implements IStartable, IUpdatable {
+export class Sun extends Mesh implements IStartable, IUpdatable, IGUIable {
   private readonly _initialUniformScale = 0.1;
   private readonly _sunPointLight: PointLight;
   private readonly _rotateAmountPerSecondInEulerAngles = 12 * DEG_TO_RAD;
@@ -20,6 +17,10 @@ export class Sun extends Mesh implements IStartable, IUpdatable {
 
     this._sunPointLight = new PointLight(SUN_EMISSIVE_COLOR, 10, 1000);
     this.add(this._sunPointLight);
+  }
+
+  onGUI(): void {
+    Runner.gui.add(this.position, "y");
   }
 
   onStart(): void {

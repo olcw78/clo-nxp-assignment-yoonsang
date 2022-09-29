@@ -12,12 +12,12 @@ import { checkWebGLCompatibility } from "./lib/util/WebGLCompatibilityCheck";
 import { SUN_EMISSIVE_COLOR, SUN_EMISSIVE_INTENSITY } from "./playground/const";
 import { loadResourcesAsync } from "./loadResources";
 
+// start running assignment.
 (async function entry() {
   if (!checkWebGLCompatibility()) {
     return;
   }
 
-  // start running assignment.
   const screenWidth = window.innerWidth;
   const screenHeight = window.innerHeight;
 
@@ -59,9 +59,9 @@ import { loadResourcesAsync } from "./loadResources";
       ),
       new Moon(moonGeometry, new MeshStandardMaterial({ map: moonDiffuseTexture }))
     )
-    // .enableAxesHelper()
-    .enableDebugGUI()
-    .enableOrbitControls()
+    .mod.enableDebugGUI()
+    .mod.enableOrbitControls()
+    // .mod.enableAxesHelper()
     .start()
     .run();
 })();
