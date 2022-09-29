@@ -1,10 +1,10 @@
 # CLO Virtual Fashion - NXP - Web Graphics 과제 테스트
 
-## 주어진 기간: 9월 28일 (수) 오전 10시 ~ 9월 30일 (금) 오전 10시
+주어진 기간: 9월 28일 (수) 오전 10시 ~ 9월 30일 (금) 오전 10시
+작업 기간: 약 17시간
+지원자 - _이윤상_
 
-## 작업 기간: 약 17시간
-
-지원자 - 이윤상
+### [프로젝트 실행 영상](https://youtu.be/c82oWQTQM_s)
 
 ---
 
@@ -45,11 +45,16 @@ yarn build - 프로젝트를 ./dist 에 빌드
 
 ---
 
-## 프로젝트 구조
+## 프로젝트 진행
 
 src/main.ts -> src/playground/index.ts -> Runner class -> 각 필요한 요소들을 chaining.
 
-### 1개의 Scene Graph 를 중심으로 구현하여 씬 빌딩에 유연성을 추가
+---
+
+## 프로젝트 구조
+
+**_1개의 Scene Graph 를 중심으로 구현하여 씬 빌딩에 유연성을 추가_**
+**_각 entity 별 lifecycle 구현하여 pluggable system 구현 (unity 구조)_**
 
 주요소
 
