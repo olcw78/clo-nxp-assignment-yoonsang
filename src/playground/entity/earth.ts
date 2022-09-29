@@ -24,7 +24,7 @@ export class Earth extends Mesh implements IStartable, IUpdatable, IGUIable {
   private readonly _initialUniformScale = 0.03;
   private readonly _initialPosition = new Vector3(200, 0, 0);
   private readonly _rotationAmountPerSecondInEulerAngles = 360 * DEG_TO_RAD;
-  private readonly _revolutionAmountPerSecondsInEulerAngles = 20 * DEG_TO_RAD; //0.99 * DEG_TO_RAD;
+  private readonly _revolutionAmountPerSecondsInEulerAngles = 0.99 * DEG_TO_RAD;
   private readonly _pivot = new Object3D();
   private _sun?: Object3D;
 

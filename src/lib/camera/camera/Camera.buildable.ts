@@ -39,8 +39,7 @@ export class CameraBuildable<CameraDataT extends ICameraData> {
           ),
           cameraData: this._cameraData
         };
-
-        return undefined;
     }
+    return undefined;
   }
 }

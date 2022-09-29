@@ -44,8 +44,11 @@ export async function run() {
       ),
       new Moon(moonGeometry, new MeshStandardMaterial({ map: moonDiffuseTexture }))
     )
+    .effect.select.unrealBloomEffect()
+    .finishSelect()
     .mod.enableDebugGUI()
     .mod.enableOrbitControls()
+    .mod.enableRenderFrameDebugDisplay()
     // .mod.enableAxesHelper()
     .start()
     .run();

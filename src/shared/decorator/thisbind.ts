@@ -6,8 +6,8 @@ type TyRetThisbind = TypedPropertyDescriptor<any>;
  * @descriptor extension target of this method
  */
 export function thisbind(
-  target: any,
-  methodName: string,
+  _: any,
+  __: string,
   descriptor: PropertyDescriptor
 ): TyRetThisbind {
   // get method itself

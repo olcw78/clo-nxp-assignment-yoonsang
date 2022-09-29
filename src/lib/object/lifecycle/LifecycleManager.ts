@@ -26,7 +26,7 @@ export class LifecycleManager {
   public loopStartables(): void {
     if (this._startables.length === 0) return;
 
-    for (let e of this._startables) {
+    for (const e of this._startables) {
       e?.onStart();
     }
   }
@@ -45,7 +45,7 @@ export class LifecycleManager {
   public loopUpdatables(deltaTime: number): void {
     if (this._updatables.length === 0) return;
 
-    for (let e of this._updatables) {
+    for (const e of this._updatables) {
       e?.onUpdate(deltaTime);
     }
   }
@@ -64,7 +64,7 @@ export class LifecycleManager {
   public loopLateUpdatables(deltaTime: number): void {
     if (this._lateUpdatables.length === 0) return;
 
-    for (let e of this._lateUpdatables) {
+    for (const e of this._lateUpdatables) {
       e?.onLateUpdate(deltaTime);
     }
   }
@@ -83,7 +83,7 @@ export class LifecycleManager {
   public loopDisables(): void {
     if (this._disables.length === 0) return;
 
-    for (let e of this._disables) {
+    for (const e of this._disables) {
       e?.onDisable();
     }
   }
@@ -102,7 +102,7 @@ export class LifecycleManager {
   public loopDestroyables(): void {
     if (this._destroyables.length === 0) return;
 
-    for (let e of this._destroyables) {
+    for (const e of this._destroyables) {
       e?.onDestroy();
     }
   }
@@ -121,7 +121,7 @@ export class LifecycleManager {
   public loopGUIables(): void {
     if (this._GUIables.length === 0) return;
 
-    for (let e of this._GUIables) {
+    for (const e of this._GUIables) {
       e?.onGUI();
     }
   }

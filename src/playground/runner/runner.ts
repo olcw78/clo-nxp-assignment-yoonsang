@@ -1,21 +1,26 @@
-import { ICameraData } from "src/lib/camera/camera/Camera.interface";
-import { OrthographicCameraData } from "src/lib/camera/orthographic/OrthographicCamera.data";
-import { PerspectiveCameraData } from "src/lib/camera/perspective/PerspectiveCamera.data";
-import { LifecycleManager } from "src/lib/object/lifecycle/LifecycleManager";
-import { thisbind } from "src/shared/decorator/thisbind";
 import {
   Camera as ThreeCamera,
   Clock,
   CubeTexture,
   Object3D,
+  // ReinhardToneMapping,
   Scene,
   WebGLRenderer
 } from "three";
+
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as lil from "lil-gui";
+
+import { ICameraData } from "src/lib/camera/camera/Camera.interface";
+import { OrthographicCameraData } from "src/lib/camera/orthographic/OrthographicCamera.data";
+import { PerspectiveCameraData } from "src/lib/camera/perspective/PerspectiveCamera.data";
+import { LifecycleManager } from "src/lib/object/lifecycle/LifecycleManager";
+import { thisbind } from "src/shared/decorator/thisbind";
+
 import { RunnerEventListener } from "./runner.eventListener";
 import { RunnerModifier } from "./runner.modifier";
 import { RunnerSceneGUI } from "./runner.sceneGUI";
+import { RunnerEffect } from "./runner.effect";
 
 type TCameraInitializer = {
   camera: ThreeCamera;
@@ -48,11 +53,15 @@ export class Runner {
     this._renderer = new WebGLRenderer({ antialias: true });
     this._renderer.setSize(window.innerWidth, window.innerHeight);
     this._renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // this._renderer.toneMapping = ReinhardToneMapping;
+    // this._renderer.toneMappingExposure = 2.5;
 
     // attach dom canvas.
     document.body.appendChild(this._renderer.domElement);
 
     this._orbitControl = new OrbitControls(this._camera, this._renderer.domElement);
+
+    this._effect = new RunnerEffect(this);
   }
 
   // #region static data
@@ -124,6 +133,11 @@ export class Runner {
     this._isAnimating = value;
   }
 
+  private readonly _effect: RunnerEffect;
+  public get effect(): RunnerEffect {
+    return this._effect;
+  }
+
   // #endregion data
 
   // #region behaviour
@@ -168,6 +182,12 @@ export class Runner {
 
   @thisbind
   public run(): void {
+    requestAnimationFrame(this.run);
+
+    if (!this._isAnimating) {
+      return;
+    }
+
     const dt = this._clock.getDelta();
     if (this._mod.debugPrintDeltaTime) {
       console.log("current delta time: " + dt);
@@ -176,13 +196,12 @@ export class Runner {
     // update updatable
     this._lifecycleManager.loopUpdatables(dt);
 
-    requestAnimationFrame(this.run);
-
     if (this._mod.orbitControlsEnabled) {
       this._orbitControl?.update();
     }
 
     this._renderer.render(Runner._scene, this._camera);
+    this._effect.update(dt);
 
     // update late updatable
     this._lifecycleManager.loopLateUpdatables(dt);

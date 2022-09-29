@@ -24,6 +24,7 @@ type TResultLoadingMoonResources = {
 };
 
 export class ResourcesLoader {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {} /** delete ctor */
 
   private static readonly dracoLoader = new DRACOLoader();
