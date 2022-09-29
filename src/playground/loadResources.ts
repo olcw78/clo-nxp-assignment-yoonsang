@@ -1,4 +1,4 @@
-import { ResourcesLoader } from "./lib/object/ResourcesLoader";
+import { ResourcesLoader } from "../lib/object/ResourcesLoader";
 
 export async function loadResourcesAsync() {
   // load all the required resources.
