@@ -90,27 +90,11 @@ export class Runner {
     return this._cameraData as OrthographicCameraData;
   }
 
-  private _debugPrintDeltaTime: boolean = false;
-  public get debugPrintDeltaTime(): boolean {
-    return this._debugPrintDeltaTime;
-  }
-  public set debugPrintDeltaTime(value: boolean) {
-    this._debugPrintDeltaTime = value;
-  }
-
   private readonly _lifecycleManager: LifecycleManager = new LifecycleManager();
 
   private readonly _orbitControl?: OrbitControls;
   public get orbitControl(): OrbitControls | undefined {
     return this._orbitControl;
-  }
-
-  private _orbitControlsEnabled: boolean = false;
-  public get orbitControlsEnabled(): boolean {
-    return this._orbitControlsEnabled;
-  }
-  public set orbitControlsEnabled(value: boolean) {
-    this._orbitControlsEnabled = value;
   }
 
   private readonly _clock = new Clock();
@@ -127,7 +111,9 @@ export class Runner {
   public start(): this {
     // start lifecycles.
     this._lifecycleManager.loopStartables();
-    this._lifecycleManager.loopGUIables();
+    if (this._mod.debugGUIenabled) {
+      this._lifecycleManager.loopGUIables();
+    }
 
     // start ticking.
     this._clock.autoStart = true;
@@ -161,7 +147,7 @@ export class Runner {
   @thisbind
   public run(): void {
     const dt = this._clock.getDelta();
-    if (this._debugPrintDeltaTime) {
+    if (this._mod.debugPrintDeltaTime) {
       console.log("current delta time: " + dt);
     }
 
@@ -170,7 +156,7 @@ export class Runner {
 
     requestAnimationFrame(this.run);
 
-    if (this._orbitControlsEnabled) {
+    if (this._mod.orbitControlsEnabled) {
       this._orbitControl!.update();
     }
 

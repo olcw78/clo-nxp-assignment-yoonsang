@@ -1,13 +1,19 @@
+import { IGUIable } from "src/lib/object/lifecycle/IGUIable";
 import { IStartable } from "src/lib/object/lifecycle/IStartable";
 import { IUpdatable } from "src/lib/object/lifecycle/IUpdatable";
 import { BufferGeometry, Material, Mesh, Object3D, Vector3 } from "three";
 import { DEG_TO_RAD } from "../const";
 import { Runner } from "../runner/runner";
 
-export class Moon extends Mesh implements IStartable, IUpdatable {
+export class Moon extends Mesh implements IStartable, IUpdatable, IGUIable {
   constructor(geometry: BufferGeometry, materialOrMaterials: Material | Material[]) {
     super(geometry, materialOrMaterials);
     this.name = "moon";
+  }
+  onGUI(): void {
+    Runner.gui.add(this.position, "x");
+    Runner.gui.add(this.position, "y");
+    Runner.gui.add(this.position, "z");
   }
 
   private readonly _initialUniformScale = 0.01;
@@ -40,7 +46,11 @@ export class Moon extends Mesh implements IStartable, IUpdatable {
     if (this._earth) {
       let earthWorldPos = new Vector3();
       this._earth.getWorldPosition(earthWorldPos);
-      this._pivot.position.set(earthWorldPos.x, earthWorldPos.y, earthWorldPos.z);
+
+      if (earthWorldPos !== this._pivot.position) {
+        const { x, y, z } = earthWorldPos;
+        this._pivot.position.set(x, y, z);
+      }
     }
 
     const nextAngle = this._revolutionAmountPerSecondsInEulerAngles * deltaTime;

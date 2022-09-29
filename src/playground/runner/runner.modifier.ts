@@ -5,6 +5,34 @@ import * as lil from "lil-gui";
 export class RunnerModifier {
   constructor(private readonly _impl: Runner) {}
 
+  // #region data
+
+  private _debugPrintDeltaTime: boolean = false;
+  public get debugPrintDeltaTime(): boolean {
+    return this._debugPrintDeltaTime;
+  }
+  public set debugPrintDeltaTime(value: boolean) {
+    this._debugPrintDeltaTime = value;
+  }
+
+  private _orbitControlsEnabled: boolean = false;
+  public get orbitControlsEnabled(): boolean {
+    return this._orbitControlsEnabled;
+  }
+  public set orbitControlsEnabled(value: boolean) {
+    this._orbitControlsEnabled = value;
+  }
+
+  private _debugGUIenabled: boolean = false;
+  public get debugGUIenabled(): boolean {
+    return this._debugGUIenabled;
+  }
+  public set debugGUIenabled(value: boolean) {
+    this._debugGUIenabled = value;
+  }
+
+  // #endregion data
+
   // #region behaviour
 
   public enableRenderFrameDebugDisplay(): Runner {
@@ -16,14 +44,14 @@ export class RunnerModifier {
     if (this._impl.orbitControl) {
       this._impl.orbitControl.update();
       this._impl.orbitControl.enableDamping = true;
-      this._impl.orbitControlsEnabled = true;
+      this._orbitControlsEnabled = true;
     }
 
     return this._impl;
   }
 
   public enableDebugPrintDeltaTime(): Runner {
-    this._impl.debugPrintDeltaTime = true;
+    this._debugPrintDeltaTime = true;
     return this._impl;
   }
 
@@ -34,6 +62,7 @@ export class RunnerModifier {
 
   public enableDebugGUI(): Runner {
     Runner.gui = new lil.GUI();
+    this._debugGUIenabled = true;
     return this._impl;
   }
 
