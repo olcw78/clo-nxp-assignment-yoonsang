@@ -98,8 +98,24 @@ export class Runner {
 
   @thisbind
   private toggleFullScreenMode(): void {
-    if (!document.fullscreenElement) {
-      this._renderer.domElement.requestFullscreen();
+    const fullscreenElement =
+      document.fullscreenElement ??
+      document.webkitFullscreenElement ??
+      document.mozFullscreenElement ??
+      document.msFullscreenElement;
+
+    if (!fullscreenElement) {
+      const canvas = this._renderer.domElement;
+
+      if (canvas.requestFullscreen) {
+        canvas.requestFullscreen();
+      } else if (canvas.webkitRequestFullscreen) {
+        canvas.webkitRequestFullscreen();
+      } else if (canvas.mozRequestFullscreen) {
+        canvas.mozRequestFullscreen();
+      } else if (canvas.msRequestFullscreen) {
+        canvas.msRequestFullscreen();
+      }
     } else {
       document.exitFullscreen();
     }
