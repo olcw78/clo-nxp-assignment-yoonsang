@@ -1,8 +1,4 @@
-# CLO Virtual Fashion - NXP - Web Graphics 과제 테스트
-
-주어진 기간: 9월 28일 (수) 오전 10시 ~ 9월 30일 (금) 오전 10시
-작업 기간: 약 17시간
-지원자 - _이윤상_
+# Solar System
 
 ### [프로젝트 실행 영상](https://youtu.be/c82oWQTQM_s)
 
