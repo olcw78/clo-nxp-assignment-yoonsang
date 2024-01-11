@@ -48,8 +48,7 @@ src/main.ts -> src/playground/index.ts -> Runner class -> 각 필요한 요소�
 
 ## 프로젝트 구조
 
-**_1개의 Scene Graph 를 중심으로 구현하여 씬 빌딩에 유연성을 추가_**
-**_각 entity 별 lifecycle 구현하여 pluggable system 구현 (unity 구조)_**
+**_각 entity 별 lifecycle 구현 하여 pluggable system 시도_**
 
 주요소
 
