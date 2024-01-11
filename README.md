@@ -31,19 +31,18 @@ yarn build - 프로젝트를 ./dist 에 빌드
    - 달: 자전 (13.33deg/s - 27초 주기), 공전(13.33deg/s - 27초 주기)
      <br/>
 
-2. 모든 리소스 활용하여 mapping 완료.
 3. 태양광을 표현하는 PointLight + emissive 이용하여 빛 표현.
 4. 조작이 가능한 카메라 (Three.OrbitControls).
 5. 다양한 수치를 조절할 수 있는 Controller UI (lil-gui 사용).
 6. 더블 클릭 (최대화/복구), h 키로 debug GUI toggle.
 7. 우주 배경의 Skybox (Three.CubeTexture).
-8. Scene-wise Unreal Bloom 적용.
+8. Scene camera Unreal Bloom 적용.
 
 ---
 
 ## 프로젝트 진행
 
-src/main.ts -> src/playground/index.ts -> Runner class -> 각 필요한 요소들을 chaining.
+src/main.ts -> src/playground/index.ts -> Runner class -> 각 필요한 요소들을 빌더로 chaining.
 
 ---
 
